@@ -12,14 +12,14 @@ public class DataLoader : MonoBehaviour
     public Sprite ButtonBackground { get; private set; }
 
     public Dictionary<string, Sprite> LoadedAssets { get; private set; } = new Dictionary<string, Sprite>();
-    private string settingsPath = "JSON/Settings.json";
-    private string welcomeMessagePath = "JSON/WelcomeMessage.json";
+    private string settingsPath = "Assets/JSON/Settings.json";
+    private string welcomeMessagePath = "Assets/JSON/WelcomeMessage.json";
     private string assetBundlePath = "Assets/AssetBundles/ui_background";
     private float artificialDelay = 1f;
 
     // Список имён ассетов, которые нужно загрузить
     [SerializeField]
-    private List<string> assetsToLoad = new List<string> { "background" }; // Добавьте нужные имена ассетов
+    private List<string> assetsToLoad = new List<string> { "ui_background" }; // Добавьте нужные имена ассетов
 
     private void Awake()
     {
@@ -57,35 +57,45 @@ public class DataLoader : MonoBehaviour
 
     private IEnumerator LoadSettings(Action<float> onProgress)
     {
-        string path = $"{Application.streamingAssetsPath}/{settingsPath}";
-        UnityWebRequest request = UnityWebRequest.Get(path);
-        yield return request.SendWebRequest();
-        if (request.result == UnityWebRequest.Result.Success)
+        string path = $"{Application.dataPath}/JSON/Settings.json";
+        if (!System.IO.File.Exists(path))
         {
-            var settings = JsonUtility.FromJson<Settings>(request.downloadHandler.text);
+            Debug.LogError($"Файл настроек не найден по пути: {path}");
+            yield break;
+        }
+
+        string json = System.IO.File.ReadAllText(path);
+        try
+        {
+            var settings = JsonUtility.FromJson<Settings>(json);
             StartingNumber = settings.startingNumber;
             onProgress(0.33f);
         }
-        else
+        catch (Exception ex)
         {
-            Debug.LogError("Failed to load settings.");
+            Debug.LogError($"Ошибка при разборе JSON файла настроек: {ex.Message}");
         }
     }
 
     private IEnumerator LoadMessage(Action<float> onProgress)
     {
-        string path = $"{Application.streamingAssetsPath}/{welcomeMessagePath}";
-        UnityWebRequest request = UnityWebRequest.Get(path);
-        yield return request.SendWebRequest();
-        if (request.result == UnityWebRequest.Result.Success)
+        string path = $"{Application.dataPath}/JSON/WelcomeMessage.json";
+        if (!System.IO.File.Exists(path))
         {
-            var message = JsonUtility.FromJson<Message>(request.downloadHandler.text);
+            Debug.LogError($"Файл приветственного сообщения не найден по пути: {path}");
+            yield break;
+        }
+
+        string json = System.IO.File.ReadAllText(path);
+        try
+        {
+            var message = JsonUtility.FromJson<Message>(json);
             WelcomeMessage = message.message;
             onProgress(0.66f);
         }
-        else
+        catch (Exception ex)
         {
-            Debug.LogError("Failed to load welcome message.");
+            Debug.LogError($"Ошибка при разборе JSON файла приветственного сообщения: {ex.Message}");
         }
     }
 
