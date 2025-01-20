@@ -547,6 +547,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f7a1047b6a00b4468447410e19b59a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  assetsToLoad:
+  - ui_background
 --- !u!4 &1405204623
 Transform:
   m_ObjectHideFlags: 0

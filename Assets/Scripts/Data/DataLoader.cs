@@ -11,9 +11,15 @@ public class DataLoader : MonoBehaviour
     public string WelcomeMessage { get; private set; }
     public Sprite ButtonBackground { get; private set; }
 
+    public Dictionary<string, Sprite> LoadedAssets { get; private set; } = new Dictionary<string, Sprite>();
     private string settingsPath = "JSON/Settings.json";
     private string welcomeMessagePath = "JSON/WelcomeMessage.json";
     private string assetBundlePath = "Assets/AssetBundles/ui_background";
+    private float artificialDelay = 1f;
+
+    // Список имён ассетов, которые нужно загрузить
+    [SerializeField]
+    private List<string> assetsToLoad = new List<string> { "background" }; // Добавьте нужные имена ассетов
 
     private void Awake()
     {
@@ -23,18 +29,33 @@ public class DataLoader : MonoBehaviour
 
     public IEnumerator LoadData(Action<float> onProgress)
     {
+        float progress = 0f;
+
         // Load JSON files
-        yield return LoadSettings(onProgress, 0.33f);
-        yield return LoadMessage(onProgress, 0.66f);
+        yield return LoadSettings(value =>
+        {
+            progress = value;
+            onProgress(progress);
+        });
+
+        yield return LoadMessage(value =>
+        {
+            progress = value;
+            onProgress(progress);
+        });
 
         // Load Asset Bundle
-        yield return LoadAssetBundle(onProgress, 1.0f);
+        yield return LoadAssetBundle(value =>
+        {
+            progress = value;
+            onProgress(progress);
+        });
 
         // Artificial delay
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(artificialDelay);
     }
 
-    private IEnumerator LoadSettings(Action<float> onProgress, float progressValue)
+    private IEnumerator LoadSettings(Action<float> onProgress)
     {
         string path = $"{Application.streamingAssetsPath}/{settingsPath}";
         UnityWebRequest request = UnityWebRequest.Get(path);
@@ -43,7 +64,7 @@ public class DataLoader : MonoBehaviour
         {
             var settings = JsonUtility.FromJson<Settings>(request.downloadHandler.text);
             StartingNumber = settings.startingNumber;
-            onProgress(progressValue);
+            onProgress(0.33f);
         }
         else
         {
@@ -51,7 +72,7 @@ public class DataLoader : MonoBehaviour
         }
     }
 
-    private IEnumerator LoadMessage(Action<float> onProgress, float progressValue)
+    private IEnumerator LoadMessage(Action<float> onProgress)
     {
         string path = $"{Application.streamingAssetsPath}/{welcomeMessagePath}";
         UnityWebRequest request = UnityWebRequest.Get(path);
@@ -60,7 +81,7 @@ public class DataLoader : MonoBehaviour
         {
             var message = JsonUtility.FromJson<Message>(request.downloadHandler.text);
             WelcomeMessage = message.message;
-            onProgress(progressValue);
+            onProgress(0.66f);
         }
         else
         {
@@ -68,7 +89,7 @@ public class DataLoader : MonoBehaviour
         }
     }
 
-    private IEnumerator LoadAssetBundle(Action<float> onProgress, float progressValue)
+    private IEnumerator LoadAssetBundle(Action<float> onProgress)
     {
         AssetBundleCreateRequest bundleRequest = AssetBundle.LoadFromFileAsync(assetBundlePath);
         yield return bundleRequest;
@@ -76,10 +97,31 @@ public class DataLoader : MonoBehaviour
         AssetBundle bundle = bundleRequest.assetBundle;
         if (bundle != null)
         {
-            Texture2D texture = bundle.LoadAsset<Texture2D>("background");
-            ButtonBackground = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+            foreach (string assetName in assetsToLoad)
+            {
+                if (bundle.Contains(assetName))
+                {
+                    Texture2D texture = bundle.LoadAsset<Texture2D>(assetName);
+
+                    if (texture != null)
+                    {
+                        Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+                        LoadedAssets[assetName] = sprite;
+                        Debug.Log($"Успешно загружен ассет: {assetName}");
+                    }
+                    else
+                    {
+                        Debug.LogError($"Не удалось загрузить текстуру из ассета: {assetName}");
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning($"AssetBundle не содержит ассета с именем: {assetName}");
+                }
+            }
+
+            onProgress(1.0f);
             bundle.Unload(false);
-            onProgress(progressValue);
         }
         else
         {
