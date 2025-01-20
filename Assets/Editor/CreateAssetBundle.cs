@@ -8,35 +8,35 @@ public class CreateAssetBundle
     [MenuItem("Assets/Assign and Build AssetBundles")]
     public static void AssignAndBuildAllAssetBundles()
     {
-        // Папка, где хранятся ассеты для назначения
-        string assetFolderPath = "Assets/Resurses"; // Укажите путь к папке с ассетами
-        string assetBundleDirectory = "Assets/AssetBundles"; // Папка для сохранения AssetBundles
+        // РџР°РїРєР°, РіРґРµ С…СЂР°РЅСЏС‚СЃСЏ Р°СЃСЃРµС‚С‹ РґР»СЏ РЅР°Р·РЅР°С‡РµРЅРёСЏ
+        string assetFolderPath = "Assets/Resurses"; // РЈРєР°Р¶РёС‚Рµ РїСѓС‚СЊ Рє РїР°РїРєРµ СЃ Р°СЃСЃРµС‚Р°РјРё
+        string assetBundleDirectory = "Assets/AssetBundles"; // РџР°РїРєР° РґР»СЏ СЃРѕС…СЂР°РЅРµРЅРёСЏ AssetBundles
 
-        // Назначение AssetBundle для всех объектов в папке
+        // РќР°Р·РЅР°С‡РµРЅРёРµ AssetBundle РґР»СЏ РІСЃРµС… РѕР±СЉРµРєС‚РѕРІ РІ РїР°РїРєРµ
         AssignAssetBundles(assetFolderPath);
 
-        // Создание папки для AssetBundles, если её нет
+        // РЎРѕР·РґР°РЅРёРµ РїР°РїРєРё РґР»СЏ AssetBundles, РµСЃР»Рё РµС‘ РЅРµС‚
         if (!Directory.Exists(assetBundleDirectory))
         {
             Directory.CreateDirectory(assetBundleDirectory);
         }
 
-        // Построение всех AssetBundles
+        // РџРѕСЃС‚СЂРѕРµРЅРёРµ РІСЃРµС… AssetBundles
         BuildPipeline.BuildAssetBundles(assetBundleDirectory, BuildAssetBundleOptions.None, BuildTarget.StandaloneWindows);
-        Debug.Log("AssetBundles успешно созданы!");
+        Debug.Log("AssetBundles СѓСЃРїРµС€РЅРѕ СЃРѕР·РґР°РЅС‹!");
     }
 
     private static void AssignAssetBundles(string folderPath)
     {
-        // Получение всех файлов в папке
+        // РџРѕР»СѓС‡РµРЅРёРµ РІСЃРµС… С„Р°Р№Р»РѕРІ РІ РїР°РїРєРµ
         string[] assetPaths = Directory.GetFiles(folderPath, "*", SearchOption.AllDirectories);
 
         foreach (string assetPath in assetPaths)
         {
-            // Пропуск метафайлов
+            // РџСЂРѕРїСѓСЃРє РјРµС‚Р°С„Р°Р№Р»РѕРІ
             if (assetPath.EndsWith(".meta")) continue;
 
-            // Преобразование абсолютного пути в относительный
+            // РџСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ Р°Р±СЃРѕР»СЋС‚РЅРѕРіРѕ РїСѓС‚Рё РІ РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅС‹Р№
             string normalizedPath = Path.GetFullPath(assetPath).Replace('\\', '/');
             string projectPath = Path.GetFullPath(Application.dataPath).Replace('\\', '/');
 
@@ -47,19 +47,19 @@ public class CreateAssetBundle
 
                 if (assetImporter != null)
                 {
-                    // Назначаем имя AssetBundle как имя файла без расширения
+                    // РќР°Р·РЅР°С‡Р°РµРј РёРјСЏ AssetBundle РєР°Рє РёРјСЏ С„Р°Р№Р»Р° Р±РµР· СЂР°СЃС€РёСЂРµРЅРёСЏ
                     string bundleName = Path.GetFileNameWithoutExtension(assetPath);
                     assetImporter.assetBundleName = bundleName;
-                    Debug.Log($"Назначен AssetBundle: {bundleName} для {relativePath}");
+                    Debug.Log($"РќР°Р·РЅР°С‡РµРЅ AssetBundle: {bundleName} РґР»СЏ {relativePath}");
                 }
                 else
                 {
-                    Debug.LogWarning($"Не удалось получить AssetImporter для {relativePath}");
+                    Debug.LogWarning($"РќРµ СѓРґР°Р»РѕСЃСЊ РїРѕР»СѓС‡РёС‚СЊ AssetImporter РґР»СЏ {relativePath}");
                 }
             }
             else
             {
-                Debug.LogError($"Путь ассета {assetPath} не принадлежит папке проекта {Application.dataPath}");
+                Debug.LogError($"РџСѓС‚СЊ Р°СЃСЃРµС‚Р° {assetPath} РЅРµ РїСЂРёРЅР°РґР»РµР¶РёС‚ РїР°РїРєРµ РїСЂРѕРµРєС‚Р° {Application.dataPath}");
             }
         }
     }

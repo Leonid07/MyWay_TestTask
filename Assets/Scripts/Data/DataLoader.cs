@@ -17,20 +17,20 @@ public class DataLoader : MonoBehaviour
     private string assetBundlePath = "Assets/AssetBundles/ui_background";
     private float artificialDelay = 1f;
 
-    // Список имён ассетов, которые нужно загрузить
+    // РЎРїРёСЃРѕРє РёРјС‘РЅ Р°СЃСЃРµС‚РѕРІ, РєРѕС‚РѕСЂС‹Рµ РЅСѓР¶РЅРѕ Р·Р°РіСЂСѓР·РёС‚СЊ
     [SerializeField]
-    private List<string> assetsToLoad = new List<string> { "ui_background" }; // Добавьте нужные имена ассетов
+    private List<string> assetsToLoad = new List<string> { "ui_background" }; // Р”РѕР±Р°РІСЊС‚Рµ РЅСѓР¶РЅС‹Рµ РёРјРµРЅР° Р°СЃСЃРµС‚РѕРІ
 
     private void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject); // Объект не уничтожается при переходе между сценами
+            DontDestroyOnLoad(gameObject); // РћР±СЉРµРєС‚ РЅРµ СѓРЅРёС‡С‚РѕР¶Р°РµС‚СЃСЏ РїСЂРё РїРµСЂРµС…РѕРґРµ РјРµР¶РґСѓ СЃС†РµРЅР°РјРё
         }
         else
         {
-            Destroy(gameObject); // Уничтожаем дублирующийся объект
+            Destroy(gameObject); // РЈРЅРёС‡С‚РѕР¶Р°РµРј РґСѓР±Р»РёСЂСѓСЋС‰РёР№СЃСЏ РѕР±СЉРµРєС‚
         }
     }
 
@@ -67,7 +67,7 @@ public class DataLoader : MonoBehaviour
         string path = $"{Application.dataPath}/JSON/Settings.json";
         if (!System.IO.File.Exists(path))
         {
-            Debug.LogError($"Файл настроек не найден по пути: {path}");
+            Debug.LogError($"Р¤Р°Р№Р» РЅР°СЃС‚СЂРѕРµРє РЅРµ РЅР°Р№РґРµРЅ РїРѕ РїСѓС‚Рё: {path}");
             yield break;
         }
 
@@ -80,7 +80,7 @@ public class DataLoader : MonoBehaviour
         }
         catch (Exception ex)
         {
-            Debug.LogError($"Ошибка при разборе JSON файла настроек: {ex.Message}");
+            Debug.LogError($"РћС€РёР±РєР° РїСЂРё СЂР°Р·Р±РѕСЂРµ JSON С„Р°Р№Р»Р° РЅР°СЃС‚СЂРѕРµРє: {ex.Message}");
         }
     }
 
@@ -89,7 +89,7 @@ public class DataLoader : MonoBehaviour
         string path = $"{Application.dataPath}/JSON/WelcomeMessage.json";
         if (!System.IO.File.Exists(path))
         {
-            Debug.LogError($"Файл приветственного сообщения не найден по пути: {path}");
+            Debug.LogError($"Р¤Р°Р№Р» РїСЂРёРІРµС‚СЃС‚РІРµРЅРЅРѕРіРѕ СЃРѕРѕР±С‰РµРЅРёСЏ РЅРµ РЅР°Р№РґРµРЅ РїРѕ РїСѓС‚Рё: {path}");
             yield break;
         }
 
@@ -102,13 +102,13 @@ public class DataLoader : MonoBehaviour
         }
         catch (Exception ex)
         {
-            Debug.LogError($"Ошибка при разборе JSON файла приветственного сообщения: {ex.Message}");
+            Debug.LogError($"РћС€РёР±РєР° РїСЂРё СЂР°Р·Р±РѕСЂРµ JSON С„Р°Р№Р»Р° РїСЂРёРІРµС‚СЃС‚РІРµРЅРЅРѕРіРѕ СЃРѕРѕР±С‰РµРЅРёСЏ: {ex.Message}");
         }
     }
 
     private IEnumerator LoadAssetBundle(Action<float> onProgress)
     {
-        // Освобождаем старый AssetBundle (если есть)
+        // РћСЃРІРѕР±РѕР¶РґР°РµРј СЃС‚Р°СЂС‹Р№ AssetBundle (РµСЃР»Рё РµСЃС‚СЊ)
         ButtonBackground = null;
         LoadedAssets.Clear();
 
@@ -128,31 +128,31 @@ public class DataLoader : MonoBehaviour
                         Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
                         LoadedAssets[assetName] = sprite;
 
-                        // Устанавливаем ButtonBackground только для первого ассета
+                        // РЈСЃС‚Р°РЅР°РІР»РёРІР°РµРј ButtonBackground С‚РѕР»СЊРєРѕ РґР»СЏ РїРµСЂРІРѕРіРѕ Р°СЃСЃРµС‚Р°
                         if (assetName == assetsToLoad[0])
                         {
                             ButtonBackground = sprite;
                         }
 
-                        Debug.Log($"Успешно загружен ассет: {assetName}");
+                        Debug.Log($"РЈСЃРїРµС€РЅРѕ Р·Р°РіСЂСѓР¶РµРЅ Р°СЃСЃРµС‚: {assetName}");
                     }
                     else
                     {
-                        Debug.LogError($"Не удалось загрузить текстуру из ассета: {assetName}");
+                        Debug.LogError($"РќРµ СѓРґР°Р»РѕСЃСЊ Р·Р°РіСЂСѓР·РёС‚СЊ С‚РµРєСЃС‚СѓСЂСѓ РёР· Р°СЃСЃРµС‚Р°: {assetName}");
                     }
                 }
                 else
                 {
-                    Debug.LogWarning($"AssetBundle не содержит ассета с именем: {assetName}");
+                    Debug.LogWarning($"AssetBundle РЅРµ СЃРѕРґРµСЂР¶РёС‚ Р°СЃСЃРµС‚Р° СЃ РёРјРµРЅРµРј: {assetName}");
                 }
             }
 
             onProgress(1.0f);
-            bundle.Unload(false); // Уничтожаем AssetBundle, оставляя только загруженные ассеты
+            bundle.Unload(false); // РЈРЅРёС‡С‚РѕР¶Р°РµРј AssetBundle, РѕСЃС‚Р°РІР»СЏСЏ С‚РѕР»СЊРєРѕ Р·Р°РіСЂСѓР¶РµРЅРЅС‹Рµ Р°СЃСЃРµС‚С‹
         }
         else
         {
-            Debug.LogError("Failed to load AssetBundle.");
+            Debug.LogError("РќРµ СѓРґР°Р»РѕСЃСЊ Р·Р°РіСЂСѓР·РёС‚СЊ AssetBundle.");
         }
     }
 }

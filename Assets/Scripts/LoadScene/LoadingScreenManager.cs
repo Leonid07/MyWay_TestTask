@@ -17,9 +17,9 @@ public class LoadingScreenManager : MonoBehaviour
     {
         yield return DataLoader.Instance.LoadData((progress) =>
         {
-            progressBar.value = progress; // Обновление прогресс-бара
+            progressBar.value = progress; // РћР±РЅРѕРІР»РµРЅРёРµ РїСЂРѕРіСЂРµСЃСЃ-Р±Р°СЂР°
         });
 
-        SceneManager.LoadScene("MainScene"); // Переход на основной экран
+        SceneManager.LoadScene("MainScene"); // РџРµСЂРµС…РѕРґ РЅР° РѕСЃРЅРѕРІРЅРѕР№ СЌРєСЂР°РЅ
     }
 }
