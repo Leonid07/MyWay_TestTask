@@ -12,8 +12,8 @@ public class DataLoader : MonoBehaviour
     public Sprite ButtonBackground { get; private set; }
 
     public Dictionary<string, Sprite> LoadedAssets { get; private set; } = new Dictionary<string, Sprite>();
-    private string settingsPath = "Assets/JSON/Settings.json";
-    private string welcomeMessagePath = "Assets/JSON/WelcomeMessage.json";
+    private string settingsPath = "/JSON/Settings.json";
+    private string welcomeMessagePath = "/JSON/WelcomeMessage.json";
     private string assetBundlePath = "Assets/AssetBundles/ui_background";
     private float artificialDelay = 1f;
 
@@ -64,7 +64,7 @@ public class DataLoader : MonoBehaviour
 
     private IEnumerator LoadSettings(Action<float> onProgress)
     {
-        string path = $"{Application.dataPath}/JSON/Settings.json";
+        string path = $"{Application.dataPath}{settingsPath}";
         if (!System.IO.File.Exists(path))
         {
             Debug.LogError($"Файл настроек не найден по пути: {path}");
@@ -86,7 +86,7 @@ public class DataLoader : MonoBehaviour
 
     private IEnumerator LoadMessage(Action<float> onProgress)
     {
-        string path = $"{Application.dataPath}/JSON/WelcomeMessage.json";
+        string path = $"{Application.dataPath}{welcomeMessagePath}";
         if (!System.IO.File.Exists(path))
         {
             Debug.LogError($"Файл приветственного сообщения не найден по пути: {path}");
