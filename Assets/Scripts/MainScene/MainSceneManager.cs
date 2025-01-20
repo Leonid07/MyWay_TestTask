@@ -150,9 +150,3 @@ public class MainSceneManager : MonoBehaviour
         }
     }
 }
-
-[System.Serializable]
-public class CounterState
-{
-    public int CounterValue;
-}

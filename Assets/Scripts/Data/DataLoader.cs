@@ -156,15 +156,3 @@ public class DataLoader : MonoBehaviour
         }
     }
 }
-
-[Serializable]
-public class Settings
-{
-    public int startingNumber;
-}
-
-[Serializable]
-public class Message
-{
-    public string message;
-}
