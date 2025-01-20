@@ -1,0 +1,7 @@
+ManifestFileVersion: 0
+CRC: 3379375868
+AssetBundleManifest:
+  AssetBundleInfos:
+    Info_0:
+      Name: ui_background
+      Dependencies: {}
