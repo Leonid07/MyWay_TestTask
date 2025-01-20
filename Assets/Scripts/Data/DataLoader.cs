@@ -23,8 +23,15 @@ public class DataLoader : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance == null) Instance = this;
-        else Destroy(gameObject);
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject); // ќбъект не уничтожаетс€ при переходе между сценами
+        }
+        else
+        {
+            Destroy(gameObject); // ”ничтожаем дублирующийс€ объект
+        }
     }
 
     public IEnumerator LoadData(Action<float> onProgress)
@@ -101,6 +108,10 @@ public class DataLoader : MonoBehaviour
 
     private IEnumerator LoadAssetBundle(Action<float> onProgress)
     {
+        // ќсвобождаем старый AssetBundle (если есть)
+        ButtonBackground = null;
+        LoadedAssets.Clear();
+
         AssetBundleCreateRequest bundleRequest = AssetBundle.LoadFromFileAsync(assetBundlePath);
         yield return bundleRequest;
 
@@ -112,11 +123,17 @@ public class DataLoader : MonoBehaviour
                 if (bundle.Contains(assetName))
                 {
                     Texture2D texture = bundle.LoadAsset<Texture2D>(assetName);
-
                     if (texture != null)
                     {
                         Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
                         LoadedAssets[assetName] = sprite;
+
+                        // ”станавливаем ButtonBackground только дл€ первого ассета
+                        if (assetName == assetsToLoad[0])
+                        {
+                            ButtonBackground = sprite;
+                        }
+
                         Debug.Log($"”спешно загружен ассет: {assetName}");
                     }
                     else
@@ -131,11 +148,11 @@ public class DataLoader : MonoBehaviour
             }
 
             onProgress(1.0f);
-            bundle.Unload(false);
+            bundle.Unload(false); // ”ничтожаем AssetBundle, оставл€€ только загруженные ассеты
         }
         else
         {
-            Debug.LogError("Failed to load Asset Bundle.");
+            Debug.LogError("Failed to load AssetBundle.");
         }
     }
 }
